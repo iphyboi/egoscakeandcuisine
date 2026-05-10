@@ -42,27 +42,3 @@ export async function POST(req: Request) {
     }
 }
 
-export async function DELETE(
-    req: Request,
-    { params } : { params: Promise<{id: string }> }
-) {
-    try {
-        const { id } = await params;
-
-        await connectDB();
-
-        const deletedCake = await Cake.findByIdAndDelete(id);
-        if (!deletedCake) {
-            return;
-            NextResponse.json({ message: "Cake not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: "Deleted successfully"}, { status: 200 });
-        
-    } catch (error: any) {
-        return NextResponse.json(
-            { error: error.message },
-            { status: 500 }
-        );
-    }
-}
