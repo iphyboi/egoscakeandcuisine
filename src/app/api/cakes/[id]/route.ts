@@ -2,25 +2,32 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../../lib/db";
 import Cake from "../../../../models/Cake";
 
-
-
-
 // GET SINGLES CAKE
 export async function GET(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await params
+        const { id } = await params;
+
         await connectDB();
+
         const cake = await Cake.findById(id);
-        return NextResponse.json(cake);
-    } catch (error) {
+
+        if (!cake) {
         return NextResponse.json(
             { message: "Cake not found" },
             { status: 404 }
         );
     }
+
+    return NextResponse.json(cake);
+} catch (error) {
+    return NextResponse.json(
+        { message: "Cake not found or database error" },
+        { status: 404}
+    );
+}
 }
 
 // UPDATE CAKE
@@ -31,6 +38,7 @@ export async function PUT(
     try {
         const { id } = await params;
         await connectDB();
+
         const body = await req.json();
         console.log("Updating ID:", id, "with data:", body);
 
@@ -40,7 +48,7 @@ export async function PUT(
             { new: true, runValidators: true }
         );
 
-        if (updatedCake) {
+        if (!updatedCake) {
             return NextResponse.json({ message: "Cake not found" }, { status: 404});
         }
 
