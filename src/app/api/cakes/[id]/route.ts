@@ -8,11 +8,12 @@ import Cake from "../../../../models/Cake";
 // GET SINGLES CAKE
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params
         await connectDB();
-        const cake = await Cake.findById(params.id);
+        const cake = await Cake.findById(id);
         return NextResponse.json(cake);
     } catch (error) {
         return NextResponse.json(
@@ -25,10 +26,10 @@ export async function GET(
 // UPDATE CAKE
 export async function PUT(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         await connectDB();
         const body = await req.json();
         console.log("Updating ID:", id, "with data:", body);
